@@ -1,10 +1,27 @@
 // http://adventofcode.com/2017/day/2
-function calculateChecksum(spreadsheet) {
+function calculateChecksumSimple(row) {
+  let max = Math.max(...row);
+  let min = Math.min(...row);
+  return max - min;
+}
+
+function calculateChecksumDivisible(row) {
+  for (let i = 0; i < row.length-1; i++) {
+  	for (let k = i+1; k < row.length; k++) {
+    	let test1 = parseInt(row[i]);
+      let test2 = parseInt(row[k]);
+      let mod = test1 > test2 ? test1 % test2 : test2 % test1;
+      if (mod === 0) {
+        return test1 > test2 ? test1 / test2 : test2 / test1;
+      }
+    }
+  }
+}
+
+function calculateChecksum(spreadsheet, callback) {
 	let checksum = 0;
   spreadsheet.forEach((row) => {
-  	let max = Math.max(...row);
-    let min = Math.min(...row);
-    checksum += (max - min);
+    checksum += callback(row);
   });
   return checksum;
 }
@@ -17,7 +34,11 @@ function convertInputToArrays(input) {
 };
 
 function solveSpreadsheet(input) {
-	return calculateChecksum(convertInputToArrays(input));
+	return calculateChecksum(convertInputToArrays(input), calculateChecksumSimple);
+}
+
+function solveSpreadsheetEven(input) {
+	return calculateChecksum(convertInputToArrays(input), calculateChecksumDivisible);
 }
 
 let input = `6046	6349	208	276	4643	1085	1539	4986	7006	5374	252	4751	226	6757	7495	2923
@@ -37,4 +58,4 @@ let input = `6046	6349	208	276	4643	1085	1539	4986	7006	5374	252	4751	226	6757	7
 198	216	5700	4212	2370	143	5140	190	4934	539	5054	3707	6121	5211	549	2790
 3021	3407	218	1043	449	214	1594	3244	3097	286	114	223	1214	3102	257	3345`;
 
-console.log(solveSpreadsheet(input));
+console.log(solveSpreadsheetEven(input));
